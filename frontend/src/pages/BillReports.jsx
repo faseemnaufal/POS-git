@@ -7,15 +7,22 @@ import ComponentToPrintAgain from "../components/ComponentToPrintAgain"
 
 export default function BillReports() {
   const [records, setRecords] = useState([]);
-  const [selectedBill, setSelectedBill] = useState(null); // State for the selected bill
+  const [selectedBill, setSelectedBill] = useState(null);
   const [printing, setPrinting] = useState(false);
+  const [printTrigger, setPrintTrigger] = useState(false);
+  const [searchBillNumber, setSearchBillNumber] = useState('');
 
-  
-  const handlePrint = useReactToPrint({
-    content: () => componentRef.current,
-  });
+
 
   const componentRef = useRef();
+
+  const handlePrint = useReactToPrint({
+    content: () => componentRef.current,
+    onAfterPrint: () => {
+      // Reset printTrigger after printing
+      setPrintTrigger(false);
+    },
+  });
 
 
   const Record = (props) => (
@@ -49,18 +56,19 @@ export default function BillReports() {
 
   // This method will map out the records on the table
   function recordList() {
-    return records.map((record) => {
-      return (
-        <Record
-          record={record}
-          viewRecord={() => viewRecord(record._id)}
-          deleteRecord={() => deleteRecord(record._id)}
-          key={record._id}
-        />
-      );
+    const filteredRecords = records.filter(record => {
+      return record.billNumber.toLowerCase().includes(searchBillNumber.toLowerCase());
     });
+  
+    return filteredRecords.map(record => (
+      <Record
+        record={record}
+        viewRecord={() => viewRecord(record._id)}
+        deleteRecord={() => deleteRecord(record._id)}
+        key={record._id}
+      />
+    ));
   }
-
 
 
     // This method will get a record and show in the page
@@ -85,6 +93,7 @@ export default function BillReports() {
         setSelectedBill(result.data);
         console.log(result.data);
         setPrinting(true);
+        setPrintTrigger(true);
       } catch (error) {
         console.error("Error fetching record:", error);
       }
@@ -94,6 +103,12 @@ export default function BillReports() {
     //   // Update the state with the selected bill
     //   setSelectedBill(bill);
     // };
+
+    useEffect(() => {
+      if (printTrigger) {
+        handlePrint();
+      }
+    }, [printTrigger, handlePrint]);
 
 
 
@@ -111,39 +126,44 @@ export default function BillReports() {
     // This following section will display the table with the records of individuals.
   return (
     <MainLayout>
-    <div>
-      <h3>Product Bills</h3>
-      <table className="table table-striped" style={{ marginTop: 20 }}>
-        <thead>
-          <tr>
-            <th>Bill Number</th>
-            <th>Total Amount</th>
-            <th>Sub Total</th>
-            <th>Discount</th>
-            <th>Date</th>
-            <th>Action</th>
-          </tr>
-        </thead>
-        <tbody>{recordList()}</tbody>
-      </table>
-    </div>
+      <>
+      <div>
+        <h3>Bills</h3>
+
+        <input
+          type="text"
+          className="form-control"
+          placeholder="Search by Bill Number"
+          value={searchBillNumber}
+          onChange={(e) => setSearchBillNumber(e.target.value)}
+        />
 
 
-    {/* {printing && (
-        <div style={{ display: "none" }}>
-          <ComponentToPrintAgain ref={componentRef} billData={selectedBill} />
-        </div>
-      )}
+        <table className="table table-striped" style={{ marginTop: 20 }}>
+          <thead>
+            <tr>
+              <th>Bill Number</th>
+              <th>Total Amount</th>
+              <th>Sub Total</th>
+              <th>Discount</th>
+              <th>Date</th>
+              <th>Action</th>
+            </tr>
+          </thead>
+          <tbody>{recordList()}</tbody>
+        </table>
+      </div>
+
 
       {selectedBill && (
-        <div>
-          <button className="btn btn-primary" onClick={handlePrint}>
-            Print Bill
-          </button>
-        </div>
-      )} */}
+          <div style={{ display: "none" }}>
+            <ComponentToPrintAgain ref={componentRef} billData={selectedBill} />
+          </div>
+        )}
 
+       
 
+      </>
     </MainLayout>
   );
 }

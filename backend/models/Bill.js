@@ -7,6 +7,15 @@ const billSchema = new mongoose.Schema({
   subTotal: Number,
   discount: Number,
   date: Date,
+  cart: [
+    {
+      id: String,
+      name: String,
+      price: Number,
+      quantity: Number,
+      totalAmount: Number,
+    }
+  ],
 });
 
 const Bill = mongoose.model('Bill', billSchema);

@@ -15,14 +15,14 @@ export const ComponentToPrint = React.forwardRef((props, ref) => {
         <p className="text-center">{currentDateTime.toLocaleString()}</p>
         {/* <p className="text-center">Bill Number: {combinedDateTime}</p> */}
         <p className="text-center">Bill Number: {billNumber}</p>
-          <table className='table'>
+          <table className='table table-bordered'>
                   <thead>
                     <tr>
                       {/* <td>Id</td> */}
-                      <td>Name</td>
-                      <td>Price</td>
-                      <td>Qty</td>
-                      <td>Total</td>
+                      <th>Name</th>
+                      <th>Price</th>
+                      <th>Quantity</th>
+                      <th>Total</th>
                     </tr>
                   </thead>
                   <tbody>

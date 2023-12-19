@@ -9,7 +9,7 @@ const app = express()
 app.use(cors())
 app.use(express.json())
 
-const mongoUrl = process.env.MONGO_URL;
+const mongoUrl = process.env.URL_DB;
 
 
 mongoose
@@ -112,6 +112,7 @@ app.post('/addBill', async (req, res) => {
   const subTotal = req.body.subTotal;
   const discount = req.body.discount;
   const date = req.body.date;
+  const cart = req.body.cart;
 
   console.log('Received Bill Data:', req.body);
 
@@ -120,7 +121,8 @@ app.post('/addBill', async (req, res) => {
     totalAmount: totalAmount,
     subTotal: subTotal,
     discount: discount,
-    date: date
+    date: date,
+    cart: cart,
   });
 
   try {
@@ -158,23 +160,6 @@ app.delete('/deleteBill/:id', async (req, res) => {
   }
 });
 
-
-//View bill again
-// app.get('/view/:id', async (req, res) => {
-//   const billId = req.params.id;
-
-//   try {
-//     const bill = await Bill.findById(billId);
-//     const response = bill
-//       ? res.json(bill)
-//       : res.status(404).json({ error: 'Bill not found' });
-
-//     return response;
-//   } catch (err) {
-//     console.error(err);
-//     res.status(500).json({ error: 'Internal server error' });
-//   }
-// });
 
 // Route to get details of a specific bill by ID
 app.get('/getBill/:id', async (req, res) => {

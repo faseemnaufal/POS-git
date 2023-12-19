@@ -106,6 +106,7 @@ function POSPage() {
           subTotal,
           discount,
           date: formattedDateTime,
+          cart: cart,
         };
 
         try {
@@ -118,7 +119,7 @@ function POSPage() {
     };
 
     saveBillAndPrint();
-  }, [billNumber, currentDateTime, totalAmount, subTotal, discount, shouldPrint, handleReactToPrint]);
+  }, [billNumber, currentDateTime, totalAmount, subTotal, discount, shouldPrint, handleReactToPrint, cart]);
 
 
 
@@ -209,7 +210,7 @@ function POSPage() {
             <div key={key} className='col-lg-4 mb-4'>
               <div className='pos-item px-3 text-center border rounded' style={{ backgroundColor: '#e9e8e8' }}>
               
-                <p style={{ color: 'black' }}>{product.id}|  {product.name}</p>
+                <p style={{ color: 'black' }}>{product.name}</p>
                 <p style={{ color: 'black' }}>Cost: {product.cost}</p>
                 <p style={{ color: 'black' }}>Rs: {product.price}</p>
                 <div className="d-flex justify-content-center">
@@ -322,6 +323,7 @@ function POSPage() {
                   
                   <button className='btn btn-primary' onClick={handlePrint}>
                     Pay Now
+                    {/* when i click PAy now the card data should be saved. then we can retriev in billreports */}
                   </button>
 
                 </div> : 'Please add a product to the cart'
